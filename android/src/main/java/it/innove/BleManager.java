@@ -231,7 +231,16 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 			callback.invoke("Peripheral not found");
 	}
 
-// @ReactMethod
+	/** 16进制字符串转换成16进制byte数组，每两位转换 */
+	public static byte[] strToHexByteArray(String str){
+		byte[] hexByte = new byte[str.length()/2];
+		for(int i = 0,j = 0; i < str.length(); i = i + 2,j++){
+			hexByte[j] = (byte)Integer.parseInt(str.substring(i,i+2), 16);
+		}
+		return hexByte;
+	}
+
+	// @ReactMethod
 	// public void write(String deviceUUID, String serviceUUID, String characteristicUUID, ReadableArray message, Integer maxByteSize, Callback callback) {
 	// 	Log.d(LOG_TAG, "Write to: " + deviceUUID);
 
