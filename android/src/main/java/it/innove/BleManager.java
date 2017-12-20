@@ -270,7 +270,7 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 			// }
 			// Log.d(LOG_TAG, "Message(" + decoded.length + "): " + bytesToHex(decoded));
 
-			//将传过来的ReadableArray类型改成直接传递String，再将16进制字符串转化成16进制byte[]数组；
+			//message由原来的ReadableArray类型改为String类型，再将16进制字符串转化成16进制byte[]数组
 			byte [] decoded = strToHexByteArray(message);
 			Log.d(LOG_TAG, "decoded: " + Arrays.toString(decoded));
 
@@ -291,7 +291,7 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 			// }
 			// Log.d(LOG_TAG, "Message(" + decoded.length + "): " + bytesToHex(decoded));
 			
-			//将传过来的ReadableArray类型改成直接传递String，再将16进制字符串转化成16进制byte[]数组；
+			//message由原来的ReadableArray类型改为String类型，再将16进制字符串转化成16进制byte[]数组
 			byte [] decoded = strToHexByteArray(message);
 			Log.d(LOG_TAG, "decoded: " + Arrays.toString(decoded));
 			peripheral.write(UUIDHelper.uuidFromString(serviceUUID), UUIDHelper.uuidFromString(characteristicUUID), decoded, maxByteSize, queueSleepTime, callback, BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
