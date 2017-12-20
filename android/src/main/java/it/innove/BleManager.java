@@ -231,38 +231,80 @@ class BleManager extends ReactContextBaseJavaModule implements ActivityEventList
 			callback.invoke("Peripheral not found");
 	}
 
+// @ReactMethod
+	// public void write(String deviceUUID, String serviceUUID, String characteristicUUID, ReadableArray message, Integer maxByteSize, Callback callback) {
+	// 	Log.d(LOG_TAG, "Write to: " + deviceUUID);
+
+	// 	Peripheral peripheral = peripherals.get(deviceUUID);
+	// 	if (peripheral != null){
+	// 		byte[] decoded = new byte[message.size()];
+	// 		for (int i = 0; i < message.size(); i++) {
+	// 			decoded[i] = new Integer(message.getInt(i)).byteValue();
+	// 			Log.d(LOG_TAG, "decoded: " + decoded[i]);
+	// 		}
+	// 		Log.d(LOG_TAG, "Message(" + decoded.length + "): " + bytesToHex(decoded));
+	// 		peripheral.write(UUIDHelper.uuidFromString(serviceUUID), UUIDHelper.uuidFromString(characteristicUUID), decoded, maxByteSize, null, callback, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+	// 	} else
+	// 		callback.invoke("Peripheral not found");
+	// }
 
 	@ReactMethod
-	public void write(String deviceUUID, String serviceUUID, String characteristicUUID, ReadableArray message, Integer maxByteSize, Callback callback) {
+	public void write(String deviceUUID, String serviceUUID, String characteristicUUID, String message, Integer maxByteSize, Callback callback) {
 		Log.d(LOG_TAG, "Write to: " + deviceUUID);
 
 		Peripheral peripheral = peripherals.get(deviceUUID);
-		if (peripheral != null) {
-			byte[] decoded = new byte[message.size()];
-			for (int i = 0; i < message.size(); i++) {
-				decoded[i] = new Integer(message.getInt(i)).byteValue();
-			}
-			Log.d(LOG_TAG, "Message(" + decoded.length + "): " + bytesToHex(decoded));
+		if (peripheral != null){
+			// byte[] decoded = new byte[message.size()];
+			// for (int i = 0; i < message.size(); i++) {
+			// 	decoded[i] = new Integer(message.getInt(i)).byteValue();
+			// 	Log.d(LOG_TAG, "decoded: " + decoded[i]);
+			// }
+			// Log.d(LOG_TAG, "Message(" + decoded.length + "): " + bytesToHex(decoded));
+
+			//将传过来的ReadableArray类型改成直接传递String，再将16进制字符串转化成16进制byte[]数组；
+			byte [] decoded = strToHexByteArray(message);
+			Log.d(LOG_TAG, "decoded: " + Arrays.toString(decoded));
+
 			peripheral.write(UUIDHelper.uuidFromString(serviceUUID), UUIDHelper.uuidFromString(characteristicUUID), decoded, maxByteSize, null, callback, BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
 		} else
 			callback.invoke("Peripheral not found");
 	}
 
 	@ReactMethod
-	public void writeWithoutResponse(String deviceUUID, String serviceUUID, String characteristicUUID, ReadableArray message, Integer maxByteSize, Integer queueSleepTime, Callback callback) {
+	public void writeWithoutResponse(String deviceUUID, String serviceUUID, String characteristicUUID, String message, Integer maxByteSize, Integer queueSleepTime, Callback callback) {
 		Log.d(LOG_TAG, "Write without response to: " + deviceUUID);
 
 		Peripheral peripheral = peripherals.get(deviceUUID);
-		if (peripheral != null) {
-			byte[] decoded = new byte[message.size()];
-			for (int i = 0; i < message.size(); i++) {
-				decoded[i] = new Integer(message.getInt(i)).byteValue();
-			}
-			Log.d(LOG_TAG, "Message(" + decoded.length + "): " + bytesToHex(decoded));
+		if (peripheral != null){
+			// byte[] decoded = new byte[message.size()];
+			// for (int i = 0; i < message.size(); i++) {
+			// 	decoded[i] = new Integer(message.getInt(i)).byteValue();
+			// }
+			// Log.d(LOG_TAG, "Message(" + decoded.length + "): " + bytesToHex(decoded));
+			
+			//将传过来的ReadableArray类型改成直接传递String，再将16进制字符串转化成16进制byte[]数组；
+			byte [] decoded = strToHexByteArray(message);
+			Log.d(LOG_TAG, "decoded: " + Arrays.toString(decoded));
 			peripheral.write(UUIDHelper.uuidFromString(serviceUUID), UUIDHelper.uuidFromString(characteristicUUID), decoded, maxByteSize, queueSleepTime, callback, BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
 		} else
 			callback.invoke("Peripheral not found");
 	}
+
+	// @ReactMethod
+	// public void writeWithoutResponse(String deviceUUID, String serviceUUID, String characteristicUUID, ReadableArray message, Integer maxByteSize, Integer queueSleepTime, Callback callback) {
+	// 	Log.d(LOG_TAG, "Write without response to: " + deviceUUID);
+
+	// 	Peripheral peripheral = peripherals.get(deviceUUID);
+	// 	if (peripheral != null){
+	// 		byte[] decoded = new byte[message.size()];
+	// 		for (int i = 0; i < message.size(); i++) {
+	// 			decoded[i] = new Integer(message.getInt(i)).byteValue();
+	// 		}
+	// 		Log.d(LOG_TAG, "Message(" + decoded.length + "): " + bytesToHex(decoded));
+	// 		peripheral.write(UUIDHelper.uuidFromString(serviceUUID), UUIDHelper.uuidFromString(characteristicUUID), decoded, maxByteSize, queueSleepTime, callback, BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE);
+	// 	} else
+	// 		callback.invoke("Peripheral not found");
+	// }
 
 	@ReactMethod
 	public void read(String deviceUUID, String serviceUUID, String characteristicUUID, Callback callback) {
