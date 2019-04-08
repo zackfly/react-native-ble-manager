@@ -9,12 +9,16 @@ buildscript {
 }
 apply plugin: 'com.android.library'
 
+def safeExtGet(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 android {
-	compileSdkVersion 24
-	buildToolsVersion "24.0.2"
+	compileSdkVersion safeExtGet("compileSdkVersion", 26)
+	buildToolsVersion safeExtGet("buildToolsVersion", "26.0.1")
 
 	defaultConfig {
-		minSdkVersion 18
+		minSdkVersion safeExtGet("minSdkVersion", 19)
 	}
 	lintOptions {
 		abortOnError false
@@ -26,6 +30,7 @@ repositories {
 	maven {
 		// All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
 		url "$rootDir/../node_modules/react-native/android"
+		// To test url "$rootDir/../example/node_modules/react-native/android"
 	}
 }
 

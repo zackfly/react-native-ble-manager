@@ -12,12 +12,10 @@ import {
   PermissionsAndroid,
   ListView,
   ScrollView,
-  AppState
+  AppState,
+  Dimensions,
 } from 'react-native';
-import Dimensions from 'Dimensions';
 import BleManager from 'react-native-ble-manager';
-import TimerMixin from 'react-timer-mixin';
-import reactMixin from 'react-mixin';
 
 const window = Dimensions.get('window');
 const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
@@ -111,11 +109,28 @@ export default class App extends Component {
 
   startScan() {
     if (!this.state.scanning) {
+      this.setState({peripherals: new Map()});
       BleManager.scan([], 3, true).then((results) => {
         console.log('Scanning...');
         this.setState({scanning:true});
       });
     }
+  }
+
+  retrieveConnected(){
+    BleManager.getConnectedPeripherals([]).then((results) => {
+      if (results.length == 0) {
+        console.log('No connected peripherals')
+      }
+      console.log(results);
+      var peripherals = this.state.peripherals;
+      for (var i = 0; i < results.length; i++) {
+        var peripheral = results[i];
+        peripheral.connected = true;
+        peripherals.set(peripheral.id, peripheral);
+        this.setState({ peripherals });
+      }
+    });
   }
 
   handleDiscoverPeripheral(peripheral){
@@ -143,7 +158,7 @@ export default class App extends Component {
           console.log('Connected to ' + peripheral.id);
 
 
-          this.setTimeout(() => {
+          setTimeout(() => {
 
             /* Test read current RSSI value
             BleManager.retrieveServices(peripheral.id).then((peripheralData) => {
@@ -162,10 +177,10 @@ export default class App extends Component {
               var bakeCharacteristic = '13333333-3333-3333-3333-333333330003';
               var crustCharacteristic = '13333333-3333-3333-3333-333333330001';
 
-              this.setTimeout(() => {
+              setTimeout(() => {
                 BleManager.startNotification(peripheral.id, service, bakeCharacteristic).then(() => {
                   console.log('Started notification on ' + peripheral.id);
-                  this.setTimeout(() => {
+                  setTimeout(() => {
                     BleManager.write(peripheral.id, service, crustCharacteristic, [0]).then(() => {
                       console.log('Writed NORMAL crust');
                       BleManager.write(peripheral.id, service, bakeCharacteristic, [1,95]).then(() => {
@@ -206,6 +221,9 @@ export default class App extends Component {
         <TouchableHighlight style={{marginTop: 40,margin: 20, padding:20, backgroundColor:'#ccc'}} onPress={() => this.startScan() }>
           <Text>Scan Bluetooth ({this.state.scanning ? 'on' : 'off'})</Text>
         </TouchableHighlight>
+        <TouchableHighlight style={{marginTop: 0,margin: 20, padding:20, backgroundColor:'#ccc'}} onPress={() => this.retrieveConnected() }>
+          <Text>Retrieve connected peripherals</Text>
+        </TouchableHighlight>
         <ScrollView style={styles.scroll}>
           {(list.length == 0) &&
             <View style={{flex:1, margin: 20}}>
@@ -232,7 +250,6 @@ export default class App extends Component {
     );
   }
 }
-reactMixin(App.prototype, TimerMixin);
 
 const styles = StyleSheet.create({
   container: {
